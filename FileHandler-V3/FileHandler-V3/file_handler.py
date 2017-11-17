@@ -1,24 +1,24 @@
-from abc import ABCMeta, abstractmethod
+from __future__ import print_function
 import sys
 import csv
 import re
 import openpyxl
 from validator import Validator
+from abc import ABCMeta, abstractmethod
 
-
-class FileReader(metaclass=ABCMeta):
+class IDataReader(metaclass=ABCMeta):
     @abstractmethod
-    def read_file(self, filename):
+    def read(self):
         pass
 
+class CSVDataReader(IDataReader):
+    def __init__(self,file_path,validator):
+        self.fpath = file_path
+        self.validator = validator
 
-class CSVReader(FileReader):
-    def __init__(self, new_validator):
-        self.validator = new_validator
-
-    def read_file(self, filename):
+    def read(self):
         try:
-            with open(filename) as f_obj:
+            with open(self.fpath) as f_obj:
                 reader = csv.DictReader(f_obj, delimiter=',')
                 the_list = []
                 for line in reader:
@@ -45,13 +45,14 @@ class CSVReader(FileReader):
             return False
 
 
-class TXTReader(FileReader):
-    def __init__(self, new_validator):
-        self.validator = new_validator
+class TxtDictReader(IDataReader):
+    def __init__(self,file_path,validator):
+        self.fpath = file_path
+        self.validator = validator
 
-    def read_file(self, filename):
+    def read(self):
         try:
-            file = open(filename, "r")
+            file = open(self.fpath, "r")
         except FileNotFoundError:
             print('The file was not found', file=sys.stderr)
             return False
@@ -78,14 +79,14 @@ class TXTReader(FileReader):
             print("There were no valid entries in the file", file=sys.stderr)
             return False
 
+class ExcelReader(IDataReader):
+    def __init__(self,file_path,validator):
+        self.fpath = file_path
+        self.validator = validator
 
-class XLSXReader(FileReader):
-    def __init__(self, new_validator):
-        self.validator = new_validator
-
-    def read_file(self, filename):
+    def read(self):
         try:
-            wb = openpyxl.load_workbook(filename)
+            wb = openpyxl.load_workbook(self.fpath)
             sheet = wb.active
             the_list = []
             for x in range(2, 29):
@@ -109,3 +110,77 @@ class XLSXReader(FileReader):
         except FileNotFoundError:
             print("File not found!", file=sys.stderr)
             return False
+
+
+class FileHandler:
+    def __init__(self, new_validator):
+        self.validator = new_validator
+
+    def open(self, file_path):
+        if re.search(r'\.csv$', file_path):
+            return CSVDataReader(file_path,self.validator).read()
+        elif re.search(r'\.txt$', file_path):
+            return TxtDictReader(file_path,self.validator).read()
+        elif re.search(r'\.xlsx$', file_path):
+            result = ExcelReader(file_path,self.validator).read()
+            if result and self.validator.check_data_set(result):
+                return result
+            else:
+                print("There were no valid entries in the file", file=sys.stderr)
+                return False
+        else:
+            print('Invalid file extension', file=sys.stderr)
+            return False
+
+    # Tim
+    @staticmethod
+    def open_rules():
+        try:
+            file = open('rules.txt', "r")
+        except FileNotFoundError:
+            print('Cannot find rules.txt', file=sys.stderr)
+            return False
+        rules = {}
+        for line in file:
+            if len(line.split("=")) == 2:
+                key = line.split("=")[0]
+                value = line.split("=")[1]
+                value = value.rstrip('\n')
+                rules[key] = value
+            else:
+                print('The file was in an invalid format', file=sys.stderr)
+                return False
+        return rules
+
+    # Tim
+    def set_rules(self):
+        self.validator.set_rules(self.open_rules())
+
+    # Rosemary
+    @staticmethod
+    def open_help(help_command):
+        """
+        >>> f = FileHandler(new_validator=Validator)
+        >>> print(f.open_help('line'))
+        line command vitualize the data.
+        >>> print(f.open_help('help'))
+        help command brings out all command.
+        >>> print(f.open_help('helpp'))
+        No such command.
+        """
+        try:
+            file = open("help.txt", "r")
+            for line in file:
+                if len(line.split("=")) == 2:
+                    entries = line.split("=")
+                    if help_command == entries[0]:
+                        return entries[1].rstrip('\n')
+                else:
+                    print("Invalid help file format!")
+        except FileNotFoundError:
+            print('The help file was not found', file=sys.stderr)
+        return "No such command."
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod(verbose=1)
