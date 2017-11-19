@@ -4,7 +4,6 @@ from validator import Validator
 
 class ValidatorTests(unittest.TestCase):
 
-    # Rosemary
     def test_id(self):
         v = Validator()
         self.assertFalse(v.check_id('UY7'))
@@ -12,10 +11,8 @@ class ValidatorTests(unittest.TestCase):
         self.assertFalse(v.check_id('AAA'))
         self.assertFalse(v.check_id('999'))
 
-    # Rosemary
     def test_gender(self):
         v = Validator()
-        # Rosemary
         self.assertTrue(v.check_gender('M'))
         self.assertTrue(v.check_gender('F'))
         # Tim
@@ -27,33 +24,29 @@ class ValidatorTests(unittest.TestCase):
         self.assertFalse(v.check_gender({}))
         self.assertFalse(v.check_gender('MF'))
 
-    # Rosemary
     def test_age(self):
         v = Validator()
         self.assertTrue(v.check_age('01'))
         self.assertTrue(v.check_age('99'))
 
-    # Rosemary
     def test_sales(self):
         v = Validator()
         self.assertTrue(v.check_sales('001'))
         self.assertTrue(v.check_sales('999'))
         self.assertFalse(v.check_sales('99'))
 
-    # Tim
     def test_salary(self):
         v = Validator()
         self.assertTrue(v.check_salary('000'))
         self.assertTrue(v.check_salary('001'))
         self.assertTrue(v.check_salary('999'))
         self.assertFalse(v.check_salary(1))
-        self.assertFalse(v.check_salary(998))
+        self.assertFalse(v.check_salary(999))
         self.assertFalse(v.check_salary('1'))
         self.assertFalse(v.check_salary("1000"))
         self.assertFalse(v.check_salary("one"))
         self.assertFalse(v.check_salary(True))
 
-    # Tim
     def test_birthday(self):
         v = Validator()
         self.assertTrue(v.check_birthday('1-1-1996'))
@@ -67,7 +60,6 @@ class ValidatorTests(unittest.TestCase):
         self.assertFalse(v.check_birthday(""))
         self.assertFalse(v.check_birthday("--"))
 
-    # Tim
     def test_bmi(self):
         v = Validator()
         self.assertTrue(v.check_bmi('Normal'))
@@ -81,7 +73,6 @@ class ValidatorTests(unittest.TestCase):
         self.assertFalse(v.check_bmi(1))
         self.assertFalse(v.check_bmi(True))
 
-    # Tim
     def test_attributes(self):
         v = Validator()
         self.assertTrue(v.check_in_attributes('EMPID'))

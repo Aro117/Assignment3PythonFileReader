@@ -6,14 +6,12 @@ import sys
 
 
 class View:
-    # Tim
     @staticmethod
     def display(list_of_dictionaries):
         for dictionary in list_of_dictionaries:
             for key in dictionary:
                 print("{0} = {1}".format(key, dictionary[key]))
 
-    # Tim
     @staticmethod
     def plot_bar(data):
         values = []
@@ -28,7 +26,6 @@ class View:
         except KeyError:
             print('Data was invalid', file=sys.stderr)
 
-    # Tim
     @staticmethod
     def plot_pie_gender(data):
         males = 0
@@ -53,7 +50,6 @@ class View:
         except KeyError:
             print('Data was invalid', file=sys.stderr)
 
-    # Hasitha
     @staticmethod
     def pygal_line_salebased(sales, ages):
         data_points = []
@@ -71,7 +67,6 @@ class View:
         except ImportError:
             print('Could not display chart on this computer as does not have lxml installed', file=sys.stderr)
 
-    # Rosemary
     # age vs salary
     @staticmethod
     def age_salary(ages, salarys):
@@ -84,7 +79,6 @@ class View:
         xy_chart = pygal.XY(stroke=False)
         xy_chart.title = 'Correlction between Ages and Sales'
         xy_chart.add('Ages', data_points)
-        # Tim
         try:
             xy_chart.render_in_browser()
         except ImportError:

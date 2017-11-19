@@ -15,7 +15,6 @@ class Command(cmd.Cmd):
     def do_quit(arg):
         sys.exit(1)
 
-    # Rosemary
     def help_quit(self):
         result = self.file_handler.open_help("quit")
         if result == "No such command.":
@@ -23,13 +22,11 @@ class Command(cmd.Cmd):
         else:
             print(result)
 
-    # Tim
     def do_open(self, arg):
         contents = self.file_handler.open(arg)
         if contents:
             self.db.insert(contents)
 
-    # Tim
     def help_open(self):
         result = self.file_handler.open_help("open")
         if result == "No such command.":
@@ -37,7 +34,6 @@ class Command(cmd.Cmd):
         else:
             print(result)
 
-    # Tim
     def do_bar(self, arg):
         arg = arg.upper()
         if arg in ("SALES", "SALARY", "AGE"):
@@ -48,11 +44,9 @@ class Command(cmd.Cmd):
         else:
             print('The valid options for a bar graph are sales, salary or age')
 
-    # Tim
     def do_get(self, arg):
         self.db.query(arg)
 
-    # Tim
     def help_get(self):
         result = self.file_handler.open_help("get")
         if result == "No such command.":
@@ -60,7 +54,6 @@ class Command(cmd.Cmd):
         else:
             print(result)
 
-    # Tim
     def do_pie(self, arg):
         arg = arg.upper()
         if arg == "GENDER":
@@ -71,7 +64,6 @@ class Command(cmd.Cmd):
         else:
             print('The valid option for a pie graph is currently only gender')
 
-    # Tim
     def help_pie(self):
         result = self.file_handler.open_help("pie")
         if result == "No such command.":
@@ -79,13 +71,11 @@ class Command(cmd.Cmd):
         else:
             print(result)
 
-    # Hasitha
     def do_line(self, arg):
         sales = self.db.get_data("SALES")
         ages = self.db.get_data("AGE")
         self.view.pygal_line_salebased(sales, ages)
 
-    # Tim
     def help_line(self):
         result = self.file_handler.open_help("line")
         if result == "No such command.":
@@ -93,14 +83,12 @@ class Command(cmd.Cmd):
         else:
             print(result)
 
-    # Rosemary
     def do_linegraph(self, arg):
         ages = self.db.get_data("AGE")
         # print(sales)
         salarys = self.db.get_data("SALARY")
         self.view.age_salary(ages, salarys)
 
-    # Tim
     def help_linegraph(self):
         result = self.file_handler.open_help("linegraph")
         if result == "No such command.":
@@ -108,7 +96,6 @@ class Command(cmd.Cmd):
         else:
             print(result)
 
-    # Tim
     def do_scatter(self, arg):
         arg = arg.upper()
         if arg == "SALARY":
@@ -122,7 +109,6 @@ class Command(cmd.Cmd):
         else:
             print('The valid options for a scatter graph are salary or sales')
 
-    #Rosemary
     def help_scatter(self):
         result = self.file_handler.open_help("scatter")
         if result == "No such command.":
@@ -130,12 +116,10 @@ class Command(cmd.Cmd):
         else:
             print(result)
 
-    # Tim
     def do_reload(self, arg):
         self.db.load()
         self.file_handler.set_rules()
 
-    # Hasitha
     def help_reload(self):
         result = self.file_handler.open_help("reload")
         if result == "No such command.":

@@ -5,7 +5,6 @@ import re
 import datetime as date
 
 
-# Tim
 class IFileValidator(metaclass=ABCMeta):
     @abstractmethod
     def check_data_set(self, data_set):
@@ -54,7 +53,6 @@ class IFileValidator(metaclass=ABCMeta):
 
 class Validator(IFileValidator):
 
-    # Tim
     def __init__(self):
         self.id_rule = "^[A-Z][0-9]{3}$"
         self.gender_rule = "^(M|F)$"
@@ -66,7 +64,6 @@ class Validator(IFileValidator):
         self.attributes = {"EMPID", "GENDER", "AGE", "SALES", "BMI", "SALARY", "BIRTHDAY"}
         self.number_of_attributes = len(self.attributes)
 
-    # Tim
     def set_rules(self, rules):
         try:
             self.id_rule = rules['id']
@@ -78,7 +75,6 @@ class Validator(IFileValidator):
         except KeyError as missing_key:
             print('The key {} was missing from the rules.txt file'.format(missing_key), file=sys.stderr)
 
-    # Tim
     def check_data_set(self, data_set):
         # Should be of form [{EMPID: B12, GENDER: M, AGE: 22, etc}, {EMPID: 55Y, GENDER: F, etc}]
         if len(data_set) == 0:
@@ -92,7 +88,6 @@ class Validator(IFileValidator):
         # Failing to invalidate is a success
         return True
 
-    # Tim
     def check_line(self, employee_attributes):
         # Should be of form {EMPID: B12, GENDER: M, AGE: 22, etc}
         for attribute in self.attributes:
@@ -108,7 +103,6 @@ class Validator(IFileValidator):
         # Failing to invalidate is a success
         return True
 
-    # Rosemary
     def check_all(self, employee_attributes):
         result = self.check_birthday(employee_attributes["BIRTHDAY"]) \
                  and self.check_id(employee_attributes["EMPID"])  \
@@ -120,9 +114,6 @@ class Validator(IFileValidator):
                  and self.check_birthday_against_age(employee_attributes["BIRTHDAY"], employee_attributes["AGE"])
         return result
 
-
-
-
     # rule_name like "salary_rule",attr_name like "Salary"
     def check_attr_match(self, rule_name, attr_name, attr_val):
         try:
@@ -133,106 +124,26 @@ class Validator(IFileValidator):
             return False
         return True
 
-
-    # Rosemary
     def check_id(self, emp_id):
-        # Tim
-        """
-        >>> v = Validator()
-        >>> v.check_id('M000')
-        True
-        >>> v.check_id('F999')
-        True
-        >>> v.check_id('m000')
-        False
-        >>> v.check_id('F9999')
-        False
-        >>> v.check_id('MMMM')
-        False
-        >>> v.check_id('0000')
-        False
-        >>> v.check_id('000')
-        False
-        >>> v.check_id('M00')
-        False
-        >>> v.check_id(None)
-        False
-        >>> v.check_id(1)
-        False
-        >>> v.check_id(True)
-        False
-        >>> v.check_id({'M00'})
-        False
-        """
         # Should be in form of [A-Z][0-9]{3}
-        # Exception handling by Tim
-        return self.check_attr_match("id_rule","id",emp_id)
+        return self.check_attr_match("id_rule", "id", emp_id)
 
-    # Tim
     def check_age(self, age):
         # Should be between 1-99
         return self.check_attr_match("age_rule", "age", age)
 
-    # Hasitha
     def check_gender(self, gender):
-        # Tim
-        """
-        >>> v = Validator()
-        >>> v.check_gender('M')
-        True
-        >>> v.check_gender('F')
-        True
-        >>> v.check_gender('MF')
-        False
-        >>> v.check_gender('m')
-        False
-        >>> v.check_gender('f')
-        False
-        >>> v.check_gender(1)
-        False
-        >>> v.check_gender(True)
-        False
-        >>> v.check_gender(None)
-        False
-        """
-        # Exception handling by Tim
         return self.check_attr_match("gender_rule", "gender", gender)
 
-    # Rosemary
     def check_sales(self, sales):
-        # Tim
-        """
-        >>> v = Validator()
-        >>> v.check_sales(-1)
-        False
-        >>> v.check_sales('000')
-        True
-        >>> v.check_sales('001')
-        True
-        >>> v.check_sales(2.5)
-        False
-        >>> v.check_sales('999')
-        True
-        >>> v.check_sales('1000')
-        False
-        >>> v.check_sales("1")
-        False
-        >>> v.check_sales(1)
-        False
-        >>> v.check_sales(999)
-        True
-        """
         return self.check_attr_match("sales_rule", "sales", sales)
 
-    # Hasitha
     def check_bmi(self, bmi):
         return self.check_attr_match("bmi_rule", "BMI", bmi)
 
-    # Hasitha
     def check_salary(self, salary):
         return self.check_attr_match("salary_rule", "Salary", salary)
 
-    # Tim
     def check_birthday(self, birthday):
         try:
             day_month_year = birthday.split("-")
@@ -248,26 +159,7 @@ class Validator(IFileValidator):
             print('The date was in an invalid format', file=sys.stderr)
             return False
 
-    # Tim
     def check_birthday_against_age(self, birthday, age):
-        # Tim
-        """
-        >>> v = Validator()
-        >>> v.check_birthday_against_age('19-06-1988', 28)
-        False
-        >>> v.check_birthday_against_age('19-06-1988', 29)
-        True
-        >>> v.check_birthday_against_age('19-06-1988', 30)
-        False
-        >>> v.check_birthday_against_age('19-12-1988', 27)
-        False
-        >>> v.check_birthday_against_age('19-12-1988', 28)
-        True
-        >>> v.check_birthday_against_age('19-12-1988', 29)
-        False
-        >>> v.check_birthday_against_age('19-12-1988', 30)
-        False
-        """
         if not self.check_birthday(birthday):
             return False
         else:
@@ -288,32 +180,7 @@ class Validator(IFileValidator):
                 # Hasn't had a birthday yet this year.
                 return int(age) == today.year - year - 1
 
-    # Tim
     def check_in_attributes(self, query_attribute):
-        # Tim
-        """
-        >>> v = Validator()
-        >>> v.check_in_attributes("EMPID")
-        True
-        >>> v.check_in_attributes("GENDER")
-        True
-        >>> v.check_in_attributes("AGE")
-        True
-        >>> v.check_in_attributes("SALES")
-        True
-        >>> v.check_in_attributes("BMI")
-        True
-        >>> v.check_in_attributes("SALARY")
-        True
-        >>> v.check_in_attributes("BIRTHDAY")
-        True
-        >>> v.check_in_attributes("Salary")
-        True
-        >>> v.check_in_attributes("SALE")
-        False
-        >>> v.check_in_attributes(1)
-        False
-        """
         try:
             return query_attribute.upper() in self.attributes
         except AttributeError:
@@ -330,28 +197,28 @@ class ValidatorBuilder:
         self.rules['bmi'] = "^(Normal|Overweight|Obesity|Underweight)$"
         self.rules['salary'] = "^[0-9]{2,3}$"
 
-    def id(self,id):
+    def id(self, id):
         self.rules['id'] = id
         return self
 
-    def gender(self,gen):
+    def gender(self, gen):
         self.rules['gender'] = gen
         return self
 
-    def age(self,age):
+    def age(self, age):
         self.rules['age'] = age
         return self
 
-    def sales(self,s):
-        self.rules['sales'] = s
+    def sales(self, sales):
+        self.rules['sales'] = sales
         return self
 
-    def bmi(self,b):
-        self.rules['bmi'] = b
+    def bmi(self, bmi):
+        self.rules['bmi'] = bmi
         return self
 
-    def salary(self,s):
-        self.rules['salary'] = s
+    def salary(self, salary):
+        self.rules['salary'] = salary
         return self
 
     def build(self):
@@ -359,7 +226,12 @@ class ValidatorBuilder:
         val.set_rules(self.rules)
         return val
 
+# if we need to change the rules in the future, build a new validator and reset some rules
 
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod(verbose=0)
+# builder = ValidatorBuilder()
+# builder.salary("^[0-9]{2,3}$")
+# my_validator = builder.build()
+
+
+
+
